@@ -1,0 +1,35 @@
+{
+  "name": "logo-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Personal logo-inspiration MCP server: curated, designer-made marks with search, similarity and collections.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "ingest": "node src/ingest.ts",
+    "start": "node src/server.ts",
+    "smoke": "node scripts/smoke.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^4.3.2",
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "better-sqlite3": "^13.2.0",
+    "sharp": "^0.35.5",
+    "sqlite-vec": "^0.1.9",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2"
+  },
+  "allowScripts": {
+    "better-sqlite3@13.2.0": true,
+    "onnxruntime-node@1.30.0": true,
+    "protobufjs@7.6.6": true,
+    "sharp@0.35.5": true
+  }
+}
