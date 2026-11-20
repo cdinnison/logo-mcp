@@ -1,6 +1,6 @@
 // npm run ingest            index new marks and embed any without vectors
 // npm run ingest -- --retag re-run zero-shot style/mark_type tagging on everything
-import { openDb, upsertLogo, indexText, toBlob, type Db } from "./db.ts";
+import { openDb, upsertLogo, indexText, toBlob, fromBlob, type Db } from "./db.ts";
 import { embedImageUrl, embedTexts, dot, USER_AGENT } from "./clip.ts";
 
 const SYMBOOLS = "https://www.symbools.com"; // apex 308-redirects here
@@ -105,7 +105,7 @@ async function embedMissing(db: Db, retag: boolean) {
   for (const row of todo) {
     try {
       let v: Float32Array;
-      if (row.embedding) v = new Float32Array(row.embedding.buffer, row.embedding.byteOffset, row.embedding.byteLength / 4);
+      if (row.embedding) v = fromBlob(row.embedding);
       else {
         v = await embedImageUrl(row.thumbnail_url);
         await sleep(DELAY_MS);
@@ -128,5 +128,5 @@ async function embedMissing(db: Db, retag: boolean) {
 const db = openDb();
 const total = await ingestSymbools(db);
 await embedMissing(db, process.argv.includes("--retag"));
-const { indexed, vectors } = db.prepare("SELECT count(*) indexed, count(embedding) vectors FROM logos WHERE source='symbools'").get() as any;
-console.log(`done: ${total} symbools marks in source, ${indexed} indexed, ${vectors} with image vectors`);
+const { n, vectors } = db.prepare("SELECT count(*) AS n, count(embedding) AS vectors FROM logos WHERE source='symbools'").get() as any;
+console.log(`done: ${total} symbools marks in source, ${n} indexed, ${vectors} with image vectors`);

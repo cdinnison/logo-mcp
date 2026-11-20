@@ -1,7 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import { openDb, toBlob, type Logo } from "./db.ts";
+import { openDb, toBlob, fromBlob, type Logo } from "./db.ts";
 import { embedImageUrl, embedTexts } from "./clip.ts";
 import { searchWvl } from "./wvl.ts";
 
@@ -153,7 +153,7 @@ server.registerTool(
       const l = getLogo(id);
       if (!l) return fail(`No logo with id ${id}`);
       tags = new Set([...parse(l.subject), ...parse(l.keywords), ...parse(l.industry)]);
-      v = l.embedding ? new Float32Array(l.embedding.buffer, l.embedding.byteOffset, l.embedding.byteLength / 4) : await embedImageUrl(l.thumbnail_url);
+      v = l.embedding ? fromBlob(l.embedding) : await embedImageUrl(l.thumbnail_url);
     } else {
       try { v = await embedImageUrl(image_url!); } catch (e) { return fail(`Could not read image: ${(e as Error).message}`); }
     }
